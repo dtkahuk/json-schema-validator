@@ -131,6 +131,25 @@ public class IfValidator extends BaseJsonValidator implements JsonValidator {
     }
 
     @Override
+    public Set<ValidationMessage> walk(JsonNode node, JsonNode rootNode, String at, boolean shouldValidateSchema) {
+        if (shouldValidateSchema) {
+            return validate(node, rootNode, at);
+        }
+
+        if (null != ifSchema) {
+            ifSchema.walk(node, rootNode, at, false);
+        }
+        if (null != thenSchema) {
+            thenSchema.walk(node, rootNode, at, false);
+        }
+        if (null != elseSchema) {
+            elseSchema.walk(node, rootNode, at, false);
+        }
+
+        return Collections.emptySet();
+    }
+
+    @Override
     public void preloadJsonSchema() {
         if(null != ifSchema) {
             ifSchema.initializeValidators();
